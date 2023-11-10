@@ -12,6 +12,8 @@ public class PlayerInputs : ScriptableObject, ScientistforScale.IPlayerActions
     public event UnityAction JumpCancelled = delegate { };
     public event UnityAction<Vector2> MoveEvent = delegate { };
     public event UnityAction MoveCancelled = delegate { };
+    public event UnityAction GrowEvent = delegate { };
+    public event UnityAction ShrinkEvent = delegate { };
 
     public ScientistforScale gameInput { get; private set; }
 
@@ -52,11 +54,6 @@ public class PlayerInputs : ScriptableObject, ScientistforScale.IPlayerActions
         }
     }
 
-    public void OnFire(InputAction.CallbackContext context)
-    {
-
-    }
-
     public void OnJump(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Performed)
@@ -67,5 +64,17 @@ public class PlayerInputs : ScriptableObject, ScientistforScale.IPlayerActions
         {
             JumpCancelled?.Invoke();
         }
+    }
+
+    public void OnShrink(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+            ShrinkEvent?.Invoke();
+    }
+
+    public void OnGrow(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+            GrowEvent?.Invoke();
     }
 }

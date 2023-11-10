@@ -68,8 +68,6 @@ public class PlayerController : MonoBehaviour
     {
         _time += Time.deltaTime;
         GatherInput();
-
-        Debug.DrawRay(transform.position, Vector2.down * (transform.localScale.y / 2 + 0.1f), Color.red);
     }
 
     private void GatherInput()

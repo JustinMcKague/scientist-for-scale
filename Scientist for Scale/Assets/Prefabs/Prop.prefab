@@ -173,3 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 0
   _scaleTime: 0.17
+  _isAffectedByHeavy: 0
+  _isAffectedByLight: 0
+  _shrinkColor: {r: 0.3037113, g: 0.7110542, b: 0.8584906, a: 1}
+  _growColor: {r: 0.8980392, g: 0.61021435, b: 0.1764706, a: 1}

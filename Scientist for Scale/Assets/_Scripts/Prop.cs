@@ -33,9 +33,20 @@ public class Prop : MonoBehaviour
 
     private bool _scaleDone = true;
 
+    private float _weight = 1f;
+    [SerializeField] private bool _isAffectedByHeavy;
+    [SerializeField] private bool _isAffectedByLight;
+
+    private SpriteRenderer _sr;
+    private Color _defaultColor;
+    [SerializeField] private Color _shrinkColor;
+    [SerializeField] private Color _growColor;
+
     private void Awake()
     {
         size = _currentSize;
+        _sr = GetComponent<SpriteRenderer>();
+        _defaultColor = _sr.color;
     }
 
     private void Start()
@@ -55,8 +66,9 @@ public class Prop : MonoBehaviour
             case -1:
                 if (_currentSize != Size.Small)
                 {
-                    _transformTo = _defaultSize * (_currentSize == Size.Neutral ? _smallScale : _neutralScale); //if the prop is neutral set it to small else set it to neutral
+                    _transformTo = _defaultSize * (_currentSize == Size.Neutral ? _smallScale : _neutralScale);
                     _currentSize = Util.Previous(_currentSize); //Goes one position backwards in the enum list
+                    ChangePropColor();
                     if (_scaleDone)
                         StartCoroutine(ScaleProp());
                 }
@@ -65,8 +77,9 @@ public class Prop : MonoBehaviour
             case 1:
                 if (_currentSize != Size.Large)
                 {
-                    _transformTo = _defaultSize * (_currentSize == Size.Neutral ? _largeScale : _neutralScale); //if the prop is neutral set it to large else set it to neutral
+                    _transformTo = _defaultSize * (_currentSize == Size.Neutral ? _largeScale : _neutralScale);
                     _currentSize = Util.Next(_currentSize); //Goes one position forward in the enum list
+                    ChangePropColor();
                     if (_scaleDone)
                         StartCoroutine(ScaleProp());
                 }
@@ -74,11 +87,26 @@ public class Prop : MonoBehaviour
         }
     }
 
+    private void ChangePropColor()
+    {
+        switch (_currentSize) 
+        {
+            case Size.Neutral:
+                StartCoroutine(ColorLerp(_defaultColor)); break;
+
+            case Size.Small:
+                StartCoroutine(ColorLerp(_shrinkColor)); break;
+
+            case Size.Large:
+                StartCoroutine(ColorLerp(_growColor)); break;
+        }
+    }
+
     private IEnumerator ScaleProp()
     {
         _scaleDone = false;
         Vector3 startScale = transform.localScale;
-        while (_timeElapsed < _scaleTime) //This causes an unintended "snapping" of the lerp, but I kinda like it.
+        while (_timeElapsed < _scaleTime)
         {
             transform.localScale = Vector2.Lerp(startScale, _transformTo, _timeElapsed / _scaleTime);
             _timeElapsed += Time.deltaTime;
@@ -87,5 +115,17 @@ public class Prop : MonoBehaviour
         transform.localScale = _transformTo;
         _scaleDone = true;
         _timeElapsed = 0;
+    }
+
+    private IEnumerator ColorLerp(Color endColor)
+    {
+        Color startColor = _sr.color;
+        while (_timeElapsed < _scaleTime)
+        {
+            _sr.color = Color.Lerp(startColor, endColor, _timeElapsed / _scaleTime);
+            _timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+        _sr.color = endColor;
     }
 }

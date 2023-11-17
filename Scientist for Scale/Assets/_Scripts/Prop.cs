@@ -77,9 +77,10 @@ public class Prop : MonoBehaviour
     private IEnumerator ScaleProp()
     {
         _scaleDone = false;
+        Vector3 startScale = transform.localScale;
         while (_timeElapsed < _scaleTime) //This causes an unintended "snapping" of the lerp, but I kinda like it.
         {
-            transform.localScale = Vector2.Lerp(transform.localScale, _transformTo, _timeElapsed / _scaleTime * Time.deltaTime);
+            transform.localScale = Vector2.Lerp(startScale, _transformTo, _timeElapsed / _scaleTime);
             _timeElapsed += Time.deltaTime;
             yield return null;
         }

@@ -10,19 +10,10 @@ public class CameraFollow : MonoBehaviour
 
     Transform _tran;
 
-    private void OnEnable()
-    {
-        GameplayManager.Instance.OnSpawn += AssignTarget;
-    }
-
-    private void OnDisable()
-    {
-        GameplayManager.Instance.OnSpawn -= AssignTarget;
-    }
-
     // Start is called before the first frame update
     void Start()
     {
+        GameplayManager.Instance.OnSpawn += AssignTarget;
         _tran = transform;
     }
 
@@ -34,7 +25,7 @@ public class CameraFollow : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-        if (_target != null)
+        if (_target != null && !CameraManager.Instance.HasCameraPointData)
         {
             Vector3 endPos = _target.transform.position + (_target.transform.rotation * _offset);
 

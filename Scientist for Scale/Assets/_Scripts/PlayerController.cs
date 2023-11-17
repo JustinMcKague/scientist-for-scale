@@ -12,6 +12,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpVelocity;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private LayerMask _layerMask;
+    private Animator _anim;
+
+    private Transform _playerTransform;
 
     private Vector2 _frameVelocity;
 
@@ -43,6 +46,16 @@ public class PlayerController : MonoBehaviour
     private bool HasCoyoteJump => _coyoteJumpAvailable && !IsGrounded() && _time < _frameLeftGround + _coyoteBufferWindow;
 
 
+    #region Animation Data
+    private int _currentState;
+
+    private static readonly int Idle = Animator.StringToHash("Player_Idle");
+    private static readonly int Run = Animator.StringToHash("Player_Run");
+    private static readonly int Jump = Animator.StringToHash("Player_JumpStart");
+    private static readonly int Apex = Animator.StringToHash("Player_JumpPeak");
+    private static readonly int Fall = Animator.StringToHash("Player_JumpFall");
+    #endregion
+
     private void OnEnable()
     {
         _inputReader.JumpEvent += HandleJump;
@@ -62,12 +75,20 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _playerTransform = transform;
+        _anim = GetComponent<Animator>();
     }
 
     private void Update()
     {
+        var state = GetState();
+
         _time += Time.deltaTime;
         GatherInput();
+
+        if (state == _currentState) return;
+        _anim.CrossFade(state, 0, 0);
+        _currentState = state;
     }
 
     private void GatherInput()
@@ -92,6 +113,18 @@ public class PlayerController : MonoBehaviour
         }
         ApplyMovement();
         Gravity();
+
+        if (_rb.velocity.y < 0.2f && _rb.velocity.y > -0.2f && !IsGrounded())
+        {
+            _anim.CrossFade(Apex, 0, 0);
+        }
+    }
+
+    private int GetState()
+    {
+        if (_jumpKeyPressed) return Jump;
+        if (IsGrounded()) return _isMoving ? Run : Idle;
+        return _rb.velocity.y > 0 ? Jump : Fall;
     }
 
     private void ApplyMovement() => _rb.velocity = _frameVelocity;
@@ -99,6 +132,8 @@ public class PlayerController : MonoBehaviour
     private void GetDir(Vector2 lastDir)
     {
         _lastDir = lastDir;
+        Vector2 facing = new Vector2((int)_lastDir.x, 1);
+        _playerTransform.localScale = facing;
         _isMoving = true;
     }
 
@@ -122,6 +157,7 @@ public class PlayerController : MonoBehaviour
 
     private void AddJumpForce()
     {
+        _anim.CrossFade(Jump, 0, 0);
         _coyoteJumpAvailable = false;
         _endedJumpEarly = false;
         _timeJumpPressed = 0;
@@ -134,7 +170,7 @@ public class PlayerController : MonoBehaviour
     {
         if (IsGrounded() && _frameVelocity.y <= 0f)
         {
-            _frameVelocity.y = 0f;
+            _frameVelocity.y = -1.5f;
         }
         else
         {
@@ -147,7 +183,7 @@ public class PlayerController : MonoBehaviour
 
     private bool IsGrounded()
     {
-        if (Physics2D.Raycast(transform.position, Vector2.down, transform.localScale.y / 2 + 0.1f, _layerMask))
+        if (Physics2D.Raycast(transform.position, Vector2.down, transform.localScale.y / 2 + 0.4f, _layerMask))
         {
             _coyoteJumpAvailable = true;
             _bufferedJumpAvailable = true;
@@ -163,5 +199,12 @@ public class PlayerController : MonoBehaviour
                 _frameLeftGround = _time; _leftGround = true;
             return false;
         }
+    }
+
+    private void OnBecameInvisible()
+    {
+        CameraManager.Instance.HasCameraPointData = false;
+        CameraManager.Instance.CurrentCameraPoint = null;
+        CameraManager.Instance.UpdateCameraSize();
     }
 }

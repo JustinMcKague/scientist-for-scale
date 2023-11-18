@@ -10,8 +10,7 @@ public class CameraFollow : MonoBehaviour
 
     Transform _tran;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         GameplayManager.Instance.OnSpawn += AssignTarget;
         _tran = transform;

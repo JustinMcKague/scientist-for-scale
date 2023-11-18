@@ -166,10 +166,14 @@ MonoBehaviour:
   _inputReader: {fileID: 11400000, guid: 0a823649ed96bfe4ea5167b980ba1e7e, type: 2}
   _jumpVelocity: 24
   _moveSpeed: 8
-  _layerMask:
+  _pushingSpeed: 3.5
+  _jumpLayer:
     serializedVersion: 2
     m_Bits: 192
-  _fallAccel: 110
+  _grabLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  _fallAccel: 100
   _jumpBufferWindow: 0.2
   _coyoteBufferWindow: 0.15
   _terminalVelocity: 40

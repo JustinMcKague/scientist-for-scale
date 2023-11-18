@@ -62,6 +62,15 @@ public partial class @ScientistforScale: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Grab"",
+                    ""type"": ""Button"",
+                    ""id"": ""b5e70ac8-f231-4d6d-b178-7f1831b84c09"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -249,6 +258,28 @@ public partial class @ScientistforScale: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Grow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""936d3e8f-b5db-48af-bfc2-5cbfa90f8272"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c17cadad-2740-49e4-afab-a3fbf023b197"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -840,6 +871,7 @@ public partial class @ScientistforScale: IInputActionCollection2, IDisposable
         m_Player_Shrink = m_Player.FindAction("Shrink", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Grow = m_Player.FindAction("Grow", throwIfNotFound: true);
+        m_Player_Grab = m_Player.FindAction("Grab", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -917,6 +949,7 @@ public partial class @ScientistforScale: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Shrink;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Grow;
+    private readonly InputAction m_Player_Grab;
     public struct PlayerActions
     {
         private @ScientistforScale m_Wrapper;
@@ -925,6 +958,7 @@ public partial class @ScientistforScale: IInputActionCollection2, IDisposable
         public InputAction @Shrink => m_Wrapper.m_Player_Shrink;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Grow => m_Wrapper.m_Player_Grow;
+        public InputAction @Grab => m_Wrapper.m_Player_Grab;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -946,6 +980,9 @@ public partial class @ScientistforScale: IInputActionCollection2, IDisposable
             @Grow.started += instance.OnGrow;
             @Grow.performed += instance.OnGrow;
             @Grow.canceled += instance.OnGrow;
+            @Grab.started += instance.OnGrab;
+            @Grab.performed += instance.OnGrab;
+            @Grab.canceled += instance.OnGrab;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -962,6 +999,9 @@ public partial class @ScientistforScale: IInputActionCollection2, IDisposable
             @Grow.started -= instance.OnGrow;
             @Grow.performed -= instance.OnGrow;
             @Grow.canceled -= instance.OnGrow;
+            @Grab.started -= instance.OnGrab;
+            @Grab.performed -= instance.OnGrab;
+            @Grab.canceled -= instance.OnGrab;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1148,6 +1188,7 @@ public partial class @ScientistforScale: IInputActionCollection2, IDisposable
         void OnShrink(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnGrow(InputAction.CallbackContext context);
+        void OnGrab(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

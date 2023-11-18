@@ -11,7 +11,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float _jumpVelocity;
     [SerializeField] private float _moveSpeed;
-    [SerializeField] private LayerMask _layerMask;
+    [SerializeField] private float _pushingSpeed;
+    [SerializeField] private LayerMask _jumpLayer;
+    [SerializeField] private LayerMask _grabLayer;
     private Animator _anim;
 
     private Transform _playerTransform;
@@ -20,6 +22,9 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 _lastDir;
     private bool _isMoving;
+    private bool _isGrabbing;
+
+    private Rigidbody2D _grabbedObject;
 
     private Rigidbody2D _rb;
     private float _time;
@@ -62,6 +67,8 @@ public class PlayerController : MonoBehaviour
         _inputReader.JumpCancelled += Gravity;
         _inputReader.MoveEvent += GetDir;
         _inputReader.MoveCancelled += StopMove;
+        _inputReader.GrabEvent += GrabActive;
+        _inputReader.ReleaseEvent += Release;
     }
 
     private void OnDisable()
@@ -70,6 +77,8 @@ public class PlayerController : MonoBehaviour
         _inputReader.JumpCancelled -= Gravity;
         _inputReader.MoveEvent -= GetDir;
         _inputReader.MoveCancelled -= StopMove;
+        _inputReader.GrabEvent -= GrabActive;
+        _inputReader.ReleaseEvent -= Release;
     }
 
     private void Awake()
@@ -106,10 +115,11 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Debug.DrawRay(_playerTransform.position, _playerTransform.right * (2 * _playerTransform.localScale.x), Color.red);
         IsGrounded();
         if (_isMoving)
         {
-            _rb.position += _moveSpeed * Vector2.right * _lastDir * Time.fixedDeltaTime;
+            _rb.position += (_isGrabbing ? _pushingSpeed : _moveSpeed) * Vector2.right * _lastDir * Time.fixedDeltaTime;
         }
         ApplyMovement();
         Gravity();
@@ -117,6 +127,11 @@ public class PlayerController : MonoBehaviour
         if (_rb.velocity.y < 0.2f && _rb.velocity.y > -0.2f && !IsGrounded())
         {
             _anim.CrossFade(Apex, 0, 0);
+        }
+
+        if (_isGrabbing && PropInRange() && _isMoving)
+        {
+            _grabbedObject.position += (_isGrabbing ? _pushingSpeed : _moveSpeed) * Vector2.right * _lastDir * Time.fixedDeltaTime;
         }
     }
 
@@ -133,8 +148,44 @@ public class PlayerController : MonoBehaviour
     {
         _lastDir = lastDir;
         Vector2 facing = new Vector2((int)_lastDir.x, 1);
-        _playerTransform.localScale = facing;
+        if (!_isGrabbing)
+            _playerTransform.localScale = facing;
         _isMoving = true;
+    }
+
+    private void GrabActive()
+    {
+        if (PropInRange())
+        {
+            _isGrabbing = true;
+        }
+        else
+        {
+            _isGrabbing = false;
+        }
+    }
+
+    private void Release()
+    {
+        _isGrabbing = false;
+        if (_grabbedObject)
+        {
+            _grabbedObject.velocity = Vector2.zero;
+            _grabbedObject.freezeRotation = true;
+        }
+        _grabbedObject = null;
+    }
+
+    private bool PropInRange()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(_playerTransform.position, _playerTransform.right, (1f * _playerTransform.localScale.x), _grabLayer);
+        if (hit)
+        {
+            _grabbedObject = hit.collider.GetComponent<Rigidbody2D>();
+            return true;
+        }
+        else 
+            return false;
     }
 
     private void StopMove()
@@ -149,7 +200,7 @@ public class PlayerController : MonoBehaviour
 
         if (!_jumpAvailable && !HasBufferedJump) return;
 
-        if (IsGrounded() || HasCoyoteJump) AddJumpForce();
+        if (IsGrounded() && !_isGrabbing || HasCoyoteJump) AddJumpForce();
 
         _jumpAvailable = false;
 
@@ -183,7 +234,7 @@ public class PlayerController : MonoBehaviour
 
     private bool IsGrounded()
     {
-        if (Physics2D.Raycast(transform.position, Vector2.down, transform.localScale.y / 2 + 0.4f, _layerMask))
+        if (Physics2D.Raycast(transform.position, Vector2.down, transform.localScale.y / 2 + 0.4f, _jumpLayer))
         {
             _coyoteJumpAvailable = true;
             _bufferedJumpAvailable = true;

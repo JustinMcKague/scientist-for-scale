@@ -41,12 +41,14 @@ public class Prop : MonoBehaviour
     private Color _defaultColor;
     [SerializeField] private Color _shrinkColor;
     [SerializeField] private Color _growColor;
+    private Rigidbody2D _rb;
 
     private void Awake()
     {
         size = _currentSize;
         _sr = GetComponent<SpriteRenderer>();
         _defaultColor = _sr.color;
+        _rb = GetComponent<Rigidbody2D>();
     }
 
     private void Start()

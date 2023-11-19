@@ -33,9 +33,18 @@ public class Prop : MonoBehaviour
 
     private bool _scaleDone = true;
 
-    private float _weight = 1f;
-    [SerializeField] private bool _isAffectedByHeavy;
-    [SerializeField] private bool _isAffectedByLight;
+    [SerializeField] private bool _canBePushed;
+
+    [HideInInspector] public bool CanBePushed;
+
+    [SerializeField] private bool _isAffectedByWeight;
+    public bool IsLightEnough {  get; private set; }
+
+    public bool IsHeavyEnough { get; private set; }
+
+    public bool RayGunLocked;
+
+    public event Action<Size> OnSizeChanged;
 
     private SpriteRenderer _sr;
     private Color _defaultColor;
@@ -45,6 +54,7 @@ public class Prop : MonoBehaviour
 
     private void Awake()
     {
+        CanBePushed = _canBePushed;
         size = _currentSize;
         _sr = GetComponent<SpriteRenderer>();
         _defaultColor = _sr.color;
@@ -54,6 +64,10 @@ public class Prop : MonoBehaviour
     private void Start()
     {
         _defaultSize = transform.localScale;
+        if (_isAffectedByWeight)
+        {
+            IsLightEnough = false;
+        }
     }
 
     /// <summary>
@@ -70,6 +84,11 @@ public class Prop : MonoBehaviour
                 {
                     _transformTo = _defaultSize * (_currentSize == Size.Neutral ? _smallScale : _neutralScale);
                     _currentSize = Util.Previous(_currentSize); //Goes one position backwards in the enum list
+
+                    if (_currentSize == Size.Small && _isAffectedByWeight) IsLightEnough = true;
+                    if (_currentSize == Size.Neutral && _isAffectedByWeight) IsLightEnough = false; IsHeavyEnough = false;
+                    OnSizeChanged?.Invoke(_currentSize);
+
                     ChangePropColor();
                     if (_scaleDone)
                         StartCoroutine(ScaleProp());
@@ -81,6 +100,11 @@ public class Prop : MonoBehaviour
                 {
                     _transformTo = _defaultSize * (_currentSize == Size.Neutral ? _largeScale : _neutralScale);
                     _currentSize = Util.Next(_currentSize); //Goes one position forward in the enum list
+
+                    if (_isAffectedByWeight) IsLightEnough = false;
+                    if (_isAffectedByWeight && _currentSize == Size.Large) IsHeavyEnough = true;
+                    OnSizeChanged?.Invoke(_currentSize);
+
                     ChangePropColor();
                     if (_scaleDone)
                         StartCoroutine(ScaleProp());

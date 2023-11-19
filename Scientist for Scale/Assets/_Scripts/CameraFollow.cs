@@ -10,7 +10,7 @@ public class CameraFollow : MonoBehaviour
 
     Transform _tran;
 
-    void Awake()
+    void Start()
     {
         GameplayManager.Instance.OnSpawn += AssignTarget;
         _tran = transform;

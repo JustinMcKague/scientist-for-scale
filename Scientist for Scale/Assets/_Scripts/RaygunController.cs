@@ -8,7 +8,7 @@ public class RaygunController : MonoBehaviour
     [SerializeField] PlayerInputs _inputReader = default;
 
     [SerializeField] private Transform _playerTransform;
-    private Transform _raygunTransform;
+    [SerializeField] private Transform _raygunTransform;
 
     [HideInInspector] public Prop ObjectToAffect;
 
@@ -24,11 +24,6 @@ public class RaygunController : MonoBehaviour
         _inputReader.ShrinkEvent -= FireShrinkBeam;
     }
 
-    private void Awake()
-    {
-        _raygunTransform = GetComponent<Transform>();
-    }
-
     private void Update()
     {
         RaygunPointToMouse();
@@ -36,14 +31,17 @@ public class RaygunController : MonoBehaviour
 
     private void RaygunPointToMouse()
     {
-
+        var rayGunVector = Camera.main.WorldToScreenPoint(_raygunTransform.position);
+        rayGunVector = Mouse.current.position.ReadValue() - (Vector2)rayGunVector;
+        var angle = Mathf.Atan2(rayGunVector.y, rayGunVector.x) * Mathf.Rad2Deg;
+        _raygunTransform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
     private void FireGrowBeam()
     {
         RaycastFromMousePosition();
 
-        if (ObjectToAffect != null)
+        if (ObjectToAffect != null && !ObjectToAffect.RayGunLocked)
         {
             ObjectToAffect.SetScale(1);
         }
@@ -55,7 +53,7 @@ public class RaygunController : MonoBehaviour
     {
         RaycastFromMousePosition();
 
-        if (ObjectToAffect != null)
+        if (ObjectToAffect != null && !ObjectToAffect.RayGunLocked)
         {
             ObjectToAffect.SetScale(-1);
         }
@@ -67,7 +65,7 @@ public class RaygunController : MonoBehaviour
     {
         var mousePosInScreen = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         RaycastHit2D hit = Physics2D.Raycast(mousePosInScreen, Vector3.forward, Mathf.Infinity);
-        
+
         if (hit.collider != null)
         {
             ObjectToAffect = hit.collider.GetComponent<Prop>();

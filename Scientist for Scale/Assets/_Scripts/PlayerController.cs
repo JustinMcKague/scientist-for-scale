@@ -25,8 +25,10 @@ public class PlayerController : MonoBehaviour
     private bool _isGrabbing;
 
     private Rigidbody2D _grabbedObject;
+    private Prop _propData;
 
     private Rigidbody2D _rb;
+    private SpriteRenderer _sr;
     private float _time;
 
     [Header("Jump Settings")]
@@ -86,6 +88,7 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _playerTransform = transform;
         _anim = GetComponent<Animator>();
+        _sr = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -129,9 +132,9 @@ public class PlayerController : MonoBehaviour
             _anim.CrossFade(Apex, 0, 0);
         }
 
-        if (_isGrabbing && PropInRange() && _isMoving)
+        if (_propData && _propData.CanBePushed && _isGrabbing && PropInRange() && _isMoving && _propData.IsLightEnough)
         {
-            _grabbedObject.position += (_isGrabbing ? _pushingSpeed : _moveSpeed) * Vector2.right * _lastDir * Time.fixedDeltaTime;
+            _grabbedObject.position += _pushingSpeed * Vector2.right * _lastDir * Time.fixedDeltaTime;
         }
     }
 
@@ -149,7 +152,14 @@ public class PlayerController : MonoBehaviour
         _lastDir = lastDir;
         Vector2 facing = new Vector2((int)_lastDir.x, 1);
         if (!_isGrabbing)
-            _playerTransform.localScale = facing;
+        {
+            if (_lastDir.x > 0)
+            {
+                _sr.flipX = false;
+            }
+            else
+                _sr.flipX = true;
+        }
         _isMoving = true;
     }
 
@@ -178,10 +188,11 @@ public class PlayerController : MonoBehaviour
 
     private bool PropInRange()
     {
-        RaycastHit2D hit = Physics2D.Raycast(_playerTransform.position, _playerTransform.right, (1f * _playerTransform.localScale.x), _grabLayer);
+        RaycastHit2D hit = Physics2D.Raycast(_playerTransform.position, _playerTransform.right * (_sr.flipX ? -1 : 1), (1f * _playerTransform.localScale.x), _grabLayer);
         if (hit)
         {
             _grabbedObject = hit.collider.GetComponent<Rigidbody2D>();
+            _propData = _grabbedObject.GetComponent<Prop>();
             return true;
         }
         else 

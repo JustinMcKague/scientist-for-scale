@@ -80,6 +80,10 @@ MonoBehaviour:
   PlayerPrefab: {fileID: 4785906920140230229, guid: c60b5b6dd98c4104c9e8a60710220ec8, type: 3}
   PlayerSpawnTransform: {fileID: 0}
   PlayerReference: {fileID: 0}
+  LastCheckpoint: {x: 0, y: 0, z: 0}
+  ActiveCheckpoint: {fileID: 21300000, guid: 7938403744f559b4082d3311af4a4fad, type: 3}
+  InactiveCheckpoint: {fileID: 1014521193, guid: 13a7c9b9b995af7409374767313e1212, type: 3}
+  Checkpoints: []
 --- !u!1 &4395946592682436610
 GameObject:
   m_ObjectHideFlags: 0

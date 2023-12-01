@@ -2,16 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraManager : StaticInstance<CameraManager>
+public class CameraManager : PersistentSingleton<CameraManager>
 {
-    public bool HasCameraPointData;
-    public GameObject CurrentCameraPoint;
+    [HideInInspector] public bool HasCameraPointData;
+    [HideInInspector] public GameObject CurrentCameraPoint;
     public Camera Camera;
     private float _defaultCamSize;
 
     [SerializeField] private float _timeToReturn;
 
-    public bool _coroutineRunning;
+    [HideInInspector] public bool _coroutineRunning;
+    [HideInInspector] public bool _playerInView = true;
 
     private void Start()
     {

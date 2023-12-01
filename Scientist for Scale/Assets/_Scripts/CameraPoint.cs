@@ -41,7 +41,7 @@ public class CameraPoint : MonoBehaviour
 
     private void OnBecameVisible()
     {
-        if (!_startedMove)
+        if (!_startedMove && CameraManager.Instance._playerInView)
         {
             CameraManager.Instance.HasCameraPointData = true;
             CameraManager.Instance.CurrentCameraPoint = this.gameObject;

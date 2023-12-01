@@ -196,6 +196,10 @@ PrefabInstance:
       propertyPath: _isAffectedByWeight
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1758319537383851506, guid: 475d77388f41466459973bf49c15fd83, type: 3}
+      propertyPath: _environmentLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 2018032364361007192, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_Name
       value: Prop
@@ -218,7 +222,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5114783388334872910, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.14767405
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5114783388334872910, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_LocalRotation.w

@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -61,6 +63,8 @@ public class PlayerController : MonoBehaviour
     private static readonly int Jump = Animator.StringToHash("Player_JumpStart");
     private static readonly int Apex = Animator.StringToHash("Player_JumpPeak");
     private static readonly int Fall = Animator.StringToHash("Player_JumpFall");
+    private static readonly int Push = Animator.StringToHash("Player_Push");
+    private static readonly int Pull = Animator.StringToHash("Player_Pull");
     #endregion
 
     private void OnEnable()
@@ -110,15 +114,10 @@ public class PlayerController : MonoBehaviour
             _jumpAvailable = true;
             _timeJumpPressed = _time;
         }
-        //if (_inputReader.gameInput.Player.Jump.phase == InputActionPhase.Performed)
-        //{
-        //    _timeJumpHeld += Time.fixedDeltaTime;
-        //}
     }
 
     private void FixedUpdate()
     {
-        Debug.DrawRay(_playerTransform.position, _playerTransform.right * (2 * _playerTransform.localScale.x), Color.red);
         IsGrounded();
         if (_isMoving)
         {
@@ -131,11 +130,34 @@ public class PlayerController : MonoBehaviour
         {
             _anim.CrossFade(Apex, 0, 0);
         }
-
+        #region Push & Pull
         if (_propData && _propData.CanBePushed && _isGrabbing && PropInRange() && _isMoving && _propData.IsLightEnough)
         {
             _grabbedObject.position += _pushingSpeed * Vector2.right * _lastDir * Time.fixedDeltaTime;
+            if (_grabbedObject.position.x > _playerTransform.position.x)
+            {
+                if (_lastDir.x > 0)
+                {
+                    _anim.CrossFade(Push, 0, 0);
+                }
+                else
+                {
+                    _anim.CrossFade(Pull, 0, 0);
+                }
+            }
+            else if (_grabbedObject.position.x < _playerTransform.position.x)
+            {
+                if (_lastDir.x < 0)
+                {
+                    _anim.CrossFade(Push, 0, 0);
+                }
+                else
+                {
+                    _anim.CrossFade(Pull, 0, 0);
+                }
+            }
         }
+        #endregion
     }
 
     private int GetState()
@@ -195,7 +217,7 @@ public class PlayerController : MonoBehaviour
             _propData = _grabbedObject.GetComponent<Prop>();
             return true;
         }
-        else 
+        else
             return false;
     }
 
@@ -263,10 +285,33 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Death")
+        {
+            transform.position = GameplayManager.Instance.LastCheckpoint;
+        }
+        if (collision.tag == "Checkpoint")
+        {
+            GameplayManager.Instance.LastCheckpoint = collision.transform.position;
+            GameplayManager.Instance.UpdateAllCheckpoints();
+        }
+        if (collision.tag == "Win")
+        {
+            GameplayManager.Instance.GoToScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+    }
+
+    private void OnBecameVisible()
+    {
+        CameraManager.Instance._playerInView = true;
+    }
+
     private void OnBecameInvisible()
     {
         CameraManager.Instance.HasCameraPointData = false;
         CameraManager.Instance.CurrentCameraPoint = null;
+        CameraManager.Instance._playerInView = false;
         CameraManager.Instance.UpdateCameraSize();
     }
 }

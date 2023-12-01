@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2764462487332965741
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7450498610821708528}
+  m_Layer: 7
+  m_Name: Heavypoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7450498610821708528
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2764462487332965741}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4451412253047504074}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6152613592587498626
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,9 +41,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4451412253047504074}
   m_Layer: 7
-  m_Name: Endpoint
+  m_Name: Elevator
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -30,7 +61,40 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1997018625353795328}
+  - {fileID: 7450498610821708528}
+  - {fileID: 3543105968796078360}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8423388362203315582
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3543105968796078360}
+  m_Layer: 7
+  m_Name: Lightpoint
+  m_TagString: Untagged
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3543105968796078360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8423388362203315582}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4451412253047504074}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &6723181274762681934
 PrefabInstance:
@@ -48,17 +112,37 @@ PrefabInstance:
       propertyPath: m_Name
       value: Elevator
       objectReference: {fileID: 0}
+    - target: {fileID: 4793344417684600591, guid: 475d77388f41466459973bf49c15fd83, type: 3}
+      propertyPath: m_Size.y
+      value: 0.24235354
+      objectReference: {fileID: 0}
+    - target: {fileID: 4793344417684600591, guid: 475d77388f41466459973bf49c15fd83, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.021176435
+      objectReference: {fileID: 0}
+    - target: {fileID: 4793344417684600591, guid: 475d77388f41466459973bf49c15fd83, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.y
+      value: 0.296875
+      objectReference: {fileID: 0}
+    - target: {fileID: 4793344417684600591, guid: 475d77388f41466459973bf49c15fd83, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4793344417684600591, guid: 475d77388f41466459973bf49c15fd83, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 0.296875
+      objectReference: {fileID: 0}
     - target: {fileID: 5114783388334872910, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_LocalScale.x
-      value: 7
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 5114783388334872910, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 5114783388334872910, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 5114783388334872910, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_LocalPosition.x
@@ -66,7 +150,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5114783388334872910, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 3.91
       objectReference: {fileID: 0}
     - target: {fileID: 5114783388334872910, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_LocalPosition.z
@@ -102,11 +186,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5114783388334872910, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_ConstrainProportionsScale
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8144811559236602112, guid: 475d77388f41466459973bf49c15fd83, type: 3}
       propertyPath: m_Constraints
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8837554234242543670, guid: 475d77388f41466459973bf49c15fd83, type: 3}
+      propertyPath: m_Size.y
+      value: 0.296875
+      objectReference: {fileID: 0}
+    - target: {fileID: 8837554234242543670, guid: 475d77388f41466459973bf49c15fd83, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 418444273c722e0498239e9a2834a76b, type: 3}
+    - target: {fileID: 8837554234242543670, guid: 475d77388f41466459973bf49c15fd83, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8837554234242543670, guid: 475d77388f41466459973bf49c15fd83, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -139,4 +239,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _timeToComplete: 0.5
-  _endPoint: {fileID: 4451412253047504074}
+  _heavyPoint: {fileID: 0}
+  _lightPoint: {fileID: 0}
+  _isConnected: 0
+  _connectedElevator: {fileID: 0}
+  _position: 2

@@ -16,9 +16,9 @@ public enum Size
 
 public class Prop : MonoBehaviour
 {
-    private float _neutralScale = 1f;
-    private float _smallScale = 0.5f;
-    private float _largeScale = 1.5f;
+    [SerializeField] private float _neutralScale = 1f;
+    [SerializeField] private float _smallScale = 0.5f;
+    [SerializeField] private float _largeScale = 1.5f;
 
     private Vector3 _defaultSize;
 
@@ -38,13 +38,15 @@ public class Prop : MonoBehaviour
     [HideInInspector] public bool CanBePushed;
 
     [SerializeField] private bool _isAffectedByWeight;
-    public bool IsLightEnough {  get; private set; }
+    public bool IsLightEnough { get; private set; }
 
     public bool IsHeavyEnough { get; private set; }
 
     public bool RayGunLocked;
 
     public event Action<Size> OnSizeChanged;
+
+    [SerializeField] private LayerMask _environmentLayer;
 
     private SpriteRenderer _sr;
     private Color _defaultColor;
@@ -70,6 +72,12 @@ public class Prop : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        //Debug.DrawRay(transform.position, Vector3.right * (transform.localScale.x / 2 + 0.15f), Color.red);
+        //CheckForOverlap();
+    }
+
     /// <summary>
     /// Sets the scale that the prop will grow or shrink to. 
     /// 1 makes the shape grow, while -1 makes the shape shrink.
@@ -87,6 +95,7 @@ public class Prop : MonoBehaviour
 
                     if (_currentSize == Size.Small && _isAffectedByWeight) IsLightEnough = true;
                     if (_currentSize == Size.Neutral && _isAffectedByWeight) IsLightEnough = false; IsHeavyEnough = false;
+                    size = _currentSize;
                     OnSizeChanged?.Invoke(_currentSize);
 
                     ChangePropColor();
@@ -103,6 +112,7 @@ public class Prop : MonoBehaviour
 
                     if (_isAffectedByWeight) IsLightEnough = false;
                     if (_isAffectedByWeight && _currentSize == Size.Large) IsHeavyEnough = true;
+                    size = _currentSize;
                     OnSizeChanged?.Invoke(_currentSize);
 
                     ChangePropColor();
@@ -115,7 +125,7 @@ public class Prop : MonoBehaviour
 
     private void ChangePropColor()
     {
-        switch (_currentSize) 
+        switch (_currentSize)
         {
             case Size.Neutral:
                 StartCoroutine(ColorLerp(_defaultColor)); break;
@@ -136,11 +146,24 @@ public class Prop : MonoBehaviour
         {
             transform.localScale = Vector2.Lerp(startScale, _transformTo, _timeElapsed / _scaleTime);
             _timeElapsed += Time.deltaTime;
+            CheckForOverlap();
             yield return null;
         }
         transform.localScale = _transformTo;
         _scaleDone = true;
         _timeElapsed = 0;
+    }
+
+    void CheckForOverlap()
+    {
+        if (Physics2D.Raycast(transform.position, Vector3.right, transform.localScale.x / 2 + 0.1f, _environmentLayer))
+        {
+            transform.position -= Vector3.right * 0.1f;
+        }
+        else if (Physics2D.Raycast(transform.position, Vector3.left, transform.localScale.x / 2 + 0.1f, _environmentLayer))
+        {
+            transform.position += Vector3.right * 0.1f;
+        }
     }
 
     private IEnumerator ColorLerp(Color endColor)
